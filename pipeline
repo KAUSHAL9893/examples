@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+
+    environment {
+        // Define any environment variables here if needed
+        GIT_URL = 'https://your-git-repository-url.git'
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git url: "${GIT_URL}", branch: 'main'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    // Add your build commands here
+                    // Example for a Java project with Maven
+                    sh 'mvn clean install'
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                script {
+                    // Add your test commands here
+                    // Example for running Maven tests
+                    sh 'mvn test'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    // Add your deployment commands here
+                    // Example for deploying to a server
+                    // sh 'scp target/your-app.war user@server:/path/to/deploy'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+        always {
+            cleanWs()
+        }
+    }
+}
